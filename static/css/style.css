@@ -1,0 +1,15 @@
+.container {
+    max-width: 700px;
+}
+
+#pgn {
+    font-size: small;
+}
+
+#show_fen {
+    font-size: small;
+}
+
+.hover {
+    border: 5px solid red;
+}
