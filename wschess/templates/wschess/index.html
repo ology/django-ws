@@ -15,17 +15,24 @@
 
 <div class="container">
   <div id="myBoard" style="width: 400px"></div>
-  <p></p>
-  {{ msg }}
 </div>
 
 <script>
+  let board;
+  let url = `ws://${window.location.host}/ws/socket-server/`;
+  const chatSocket = new WebSocket(url);
+  chatSocket.onmessage = function(e) {
+    let data = JSON.parse(e.data);
+    console.log('D:', data);
+    if (data.type === 'chat') {
+      board.position(data.message);
+    }
+  }
   function onDrop (source, target, piece, newPos, oldPos, orientation) {
     console.log(piece + ': ' + source + ' => ' + target);
-    const payload = {
-        newPos: newPos,
-        csrfmiddlewaretoken: "{{ csrf_token }}",
-    };
+    chatSocket.send(JSON.stringify({
+      message: Chessboard.objToFen(newPos)
+    }));
   }
   function init_game() {
     const config = {
@@ -36,7 +43,7 @@
       sparePieces: false,
       onDrop: onDrop,
     };
-    const board = Chessboard('myBoard', config);
+    board = Chessboard('myBoard', config);
   }
   init_game();
 </script>
